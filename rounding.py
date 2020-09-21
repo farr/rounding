@@ -1,6 +1,6 @@
 import numpy as np
 
-def round_consistently(values, min_sig_digits=2):
+def round_consistently(values, min_sig_digits=2, return_least_sig=False):
     """Returns `values` rounded consistently.
 
     The return values will all have *at least* `min_sig_digits`, and will be
@@ -10,6 +10,12 @@ def round_consistently(values, min_sig_digits=2):
 
     :param min_sig_digits: Minimum number of significant figures to preserve for
       any value.
+
+    :param return_least_sig: If `True` return both the rounded values and the
+      least-significant digit in the rounding.
+
+    :return: `rounded_values` or (`rounded_values, least_sig_digit`) depending
+      on the `return_least_sig` flag.
 
     Examples:
         >>> import numpy as np
@@ -29,8 +35,15 @@ def round_consistently(values, min_sig_digits=2):
 
         >>> round_consistently(1e30*np.array([x,y,z]))
         [1.06e+30, -8.099999999999999e+29, -6.1e+29]
+
+        >>> round_consistently([x,y,z], return_least_sig=True)
+        ([1.06, -0.81, -0.61], -2)
     """
     most_sig_pow_10 = [int(np.floor(np.log10(np.abs(v)))) for v in values]
     round_digit = np.min(most_sig_pow_10) - min_sig_digits + 1
 
-    return [round(v, -round_digit) for v in values]
+    rounded_values = [round(v, -round_digit) for v in values]
+    if return_least_sig:
+        return rounded_values, round_digit
+    else:
+        return rounded_values
