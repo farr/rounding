@@ -73,6 +73,9 @@ def center_and_range_latex(c, l, h, min_sig_digits=2):
 
         >>> center_and_range_latex(c, l, h, min_sig_digits=4)
         '-0.6127^{+1.6711}_{-0.2011}'
+
+        >>> center_and_range_latex(1e3*c, 1e3*l, 1e3*h)
+        '-610^{+1670}_{-200}'
     """
 
     upper = h - c
