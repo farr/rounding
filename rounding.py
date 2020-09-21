@@ -47,3 +47,43 @@ def round_consistently(values, min_sig_digits=2, return_least_sig=False):
         return rounded_values, round_digit
     else:
         return rounded_values
+
+def center_and_range_latex(c, l, h, min_sig_digits=2):
+
+    r"""Return a LaTeX string which is x^{+(h-c)}_{-(c-l)} giving a central
+    value and (incremental) range rounded appropriately.
+
+    :param c: The central value.
+
+    :param l: The lower value (not the increment!).
+
+    :param h: The upper value.
+
+    :param min_sig_digits: The minimum number of significant digits each of the
+       three formatted numbers should carry.
+
+
+    Examples:
+
+        >>> import numpy as np
+        >>> h, l, c = (1.0584378784847064, -0.8138475623409628, -0.6127108398864638)
+
+        >>> center_and_range_latex(c, l, h)
+        '-0.61^{+1.67}_{-0.20}'
+
+        >>> center_and_range_latex(c, l, h, min_sig_digits=4)
+        '-0.6127^{+1.6711}_{-0.2011}'
+    """
+
+    upper = h - c
+    lower = c - l
+
+    (c, l, h), n = round_consistently([c, upper, lower], min_sig_digits=min_sig_digits, return_least_sig=True)
+
+    if n < 0:
+        # Then we need to tell the f format string about it.
+        nf = abs(n)
+    else:
+        nf = 0
+
+    return '{{:.{:d}f}}^{{{{+{{:.{:d}f}}}}}}_{{{{-{{:.{:d}f}}}}}}'.format(nf, nf, nf).format(c, l, h)
